@@ -14,7 +14,7 @@ public class ProcessoService {
 
 	public ProcessoService(List<Processo> processos) {
 		this.processos = List.of(new Processo(1, 27D), new Processo(2, 18D), new Processo(3, 39D),
-				new Processo(41, 42D));
+				new Processo(4, 42D));
 		this.quantidadeProcessos = 4;
 	}
 
@@ -71,8 +71,8 @@ public class ProcessoService {
 	private void metodoRoundRobin() {
 		List<Processo> processosRobin = ordernarRoundRobin();
 		ProcessoView.calculo(//
-				temRobin(processosRobin), //
-				tmpRobin(processosRobin)//
+				tmpRobin(processosRobin), //
+				temRobin(processosRobin)//
 		);
 	}
 
@@ -80,24 +80,30 @@ public class ProcessoService {
 		Double media = 0.0;
 		List<Double> listaIntervalo = new ArrayList<>();
 		for (int i = 0; i < quantidadeProcessos; i++) {
-			media += this.processos.get(i).getTempo();
-			listaIntervalo.add(media);
+			listaIntervalo.add(processos.get(i).getTempoInicial());
 		}
+//		for (int i = 0; i < quantidadeProcessos; i++) {
+//			media += this.processos.get(i).getTempo();
+//			listaIntervalo.add(media);
+//		}
 		return somaIntervalo(listaIntervalo) / this.quantidadeProcessos;
 	}
 
 	private Double tmpRobin(List<Processo> processosRobin) {
-		List<Integer> idProcessos = new ArrayList<>();
-		Double media = 0.0;
 		ArrayList<Double> listaIntervalo = new ArrayList<>();
-		for (Integer i = processosRobin.size() - 1; i > 0; i--) {
-			Processo processoRobin = processosRobin.get(i);
-			if (idProcessos.contains(processoRobin.getId())) {
-				media += processoRobin.getTempo();
-				listaIntervalo.add(media);
-				idProcessos.add(processoRobin.getId());
-			}
+		for (int i = 0; i < quantidadeProcessos; i++) {
+			listaIntervalo.add(processos.get(i).getTempoFinal());
 		}
+//		Double media = 0.0;
+//		ArrayList<Double> listaIntervalo = new ArrayList<>();
+//		for (Integer i = processosRobin.size() - 1; i > 0; i--) {
+//			Processo processoRobin = processosRobin.get(i);
+//			if (idProcessos.contains(processoRobin.getId())) {
+//				media += processoRobin.getTempo();
+//				listaIntervalo.add(media);
+//				idProcessos.add(processoRobin.getId());
+//			}
+//		}
 		return somaIntervalo(listaIntervalo) / this.quantidadeProcessos;
 	}
 
@@ -121,21 +127,48 @@ public class ProcessoService {
 		return somaIntervalo(listaIntervalo) / this.processos.size();
 	}
 
+//	private List<Processo> ordernarRoundRobin() {
+//		List<Processo> processosRobin = new ArrayList<>();
+//		for (int i = 0; i < quantidadeDeRounds(); i++) {
+//			for (Processo processo : processos) {
+//				if (processo.getTempo() > 0) {
+//					Processo processoRobin = new Processo();
+//					processoRobin.setNome(processo.getNome());
+//					processoRobin.setPrioridade(processo.getPrioridade());
+//					processoRobin.setTempo(processo.getTempo());
+//					processoRobin.setTempoInicial(processo.getTempo());
+//					processo.setTempo(processo.getTempo() - MensagensConstant.QUANTUM);
+//					processoRobin.setTempoFinal(processo.getTempo());
+//					processosRobin.add(processoRobin);
+//				}
+//			}
+//		}
+//		return processosRobin;
+//	}
+
 	private List<Processo> ordernarRoundRobin() {
 		List<Processo> processosRobin = new ArrayList<>();
-		for (int i = 0; i < quantidadeDeRounds(); i++) {
+		Double total = pegarTotalTempo();
+		Integer voltas = 1;
+		Double somatoria = 0.0;
+		while (total > somatoria) {
 			for (Processo processo : processos) {
-				if (processo.getTempo() > 0) {
-					Processo processoRobin = new Processo();
-					processoRobin.setNome(processo.getNome());
-					processoRobin.setPrioridade(processo.getPrioridade());
-					processoRobin.setTempo(processo.getTempo());
-					processoRobin.setTempoInicial(processo.getTempo());
-					processo.setTempo(processo.getTempo() - MensagensConstant.QUANTUM);
-					processoRobin.setTempoFinal(processo.getTempo());
-					processosRobin.add(processoRobin);
+				if (voltas == 1) {
+					processo.setTempoInicial(somatoria);
 				}
+				if (processo.getTempo() - voltas * MensagensConstant.QUANTUM > 0) {
+					somatoria += MensagensConstant.QUANTUM;
+				} else if (processo.getTempo() - voltas * MensagensConstant.QUANTUM == 0) {
+					somatoria += MensagensConstant.QUANTUM;
+					processo.setTempoFinal(somatoria);
+				} else if (processo.getTempo() - voltas * MensagensConstant.QUANTUM < 0
+						&& processo.getTempoFinal() == null) {
+					somatoria += processo.getTempo() - ((voltas - 1) * MensagensConstant.QUANTUM);
+					processo.setTempoFinal(somatoria);
+				}
+
 			}
+			voltas++;
 		}
 		return processosRobin;
 	}
@@ -190,5 +223,13 @@ public class ProcessoService {
 			}
 		}
 		return maiorTempo;
+	}
+
+	private Double pegarTotalTempo() {
+		Double total = 0.0;
+		for (Processo processo : processos) {
+			total += processo.getTempo();
+		}
+		return total;
 	}
 }
