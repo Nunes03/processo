@@ -13,9 +13,8 @@ public class ProcessoService {
 	private Integer quantidadeProcessos = 0;
 
 	public ProcessoService(List<Processo> processos) {
-		this.processos = List.of(new Processo(1, 27D), new Processo(2, 18D), new Processo(3, 39D),
-				new Processo(4, 42D));
-		this.quantidadeProcessos = 4;
+		this.processos = List.of(new Processo(1, 20D), new Processo(2, 9D), new Processo(3, 10D));
+		this.quantidadeProcessos = 3;
 	}
 
 	public static void pegarQuantum() {
@@ -69,41 +68,26 @@ public class ProcessoService {
 	}
 
 	private void metodoRoundRobin() {
-		List<Processo> processosRobin = ordernarRoundRobin();
+		ordernarRoundRobin();
 		ProcessoView.calculo(//
-				tmpRobin(processosRobin), //
-				temRobin(processosRobin)//
+				tmpRobin(), //
+				temRobin()//
 		);
 	}
 
-	private Double temRobin(List<Processo> processosRobin) {
-		Double media = 0.0;
+	private Double temRobin() {
 		List<Double> listaIntervalo = new ArrayList<>();
 		for (int i = 0; i < quantidadeProcessos; i++) {
 			listaIntervalo.add(processos.get(i).getTempoInicial());
 		}
-//		for (int i = 0; i < quantidadeProcessos; i++) {
-//			media += this.processos.get(i).getTempo();
-//			listaIntervalo.add(media);
-//		}
 		return somaIntervalo(listaIntervalo) / this.quantidadeProcessos;
 	}
 
-	private Double tmpRobin(List<Processo> processosRobin) {
+	private Double tmpRobin() {
 		ArrayList<Double> listaIntervalo = new ArrayList<>();
 		for (int i = 0; i < quantidadeProcessos; i++) {
 			listaIntervalo.add(processos.get(i).getTempoFinal());
 		}
-//		Double media = 0.0;
-//		ArrayList<Double> listaIntervalo = new ArrayList<>();
-//		for (Integer i = processosRobin.size() - 1; i > 0; i--) {
-//			Processo processoRobin = processosRobin.get(i);
-//			if (idProcessos.contains(processoRobin.getId())) {
-//				media += processoRobin.getTempo();
-//				listaIntervalo.add(media);
-//				idProcessos.add(processoRobin.getId());
-//			}
-//		}
 		return somaIntervalo(listaIntervalo) / this.quantidadeProcessos;
 	}
 
@@ -127,27 +111,7 @@ public class ProcessoService {
 		return somaIntervalo(listaIntervalo) / this.processos.size();
 	}
 
-//	private List<Processo> ordernarRoundRobin() {
-//		List<Processo> processosRobin = new ArrayList<>();
-//		for (int i = 0; i < quantidadeDeRounds(); i++) {
-//			for (Processo processo : processos) {
-//				if (processo.getTempo() > 0) {
-//					Processo processoRobin = new Processo();
-//					processoRobin.setNome(processo.getNome());
-//					processoRobin.setPrioridade(processo.getPrioridade());
-//					processoRobin.setTempo(processo.getTempo());
-//					processoRobin.setTempoInicial(processo.getTempo());
-//					processo.setTempo(processo.getTempo() - MensagensConstant.QUANTUM);
-//					processoRobin.setTempoFinal(processo.getTempo());
-//					processosRobin.add(processoRobin);
-//				}
-//			}
-//		}
-//		return processosRobin;
-//	}
-
-	private List<Processo> ordernarRoundRobin() {
-		List<Processo> processosRobin = new ArrayList<>();
+	private void ordernarRoundRobin() {
 		Double total = pegarTotalTempo();
 		Integer voltas = 1;
 		Double somatoria = 0.0;
@@ -170,7 +134,6 @@ public class ProcessoService {
 			}
 			voltas++;
 		}
-		return processosRobin;
 	}
 
 	private void ordenarPorTempo() {
