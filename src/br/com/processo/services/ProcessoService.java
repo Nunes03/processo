@@ -3,6 +3,8 @@ package br.com.processo.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import br.com.processo.entities.Processo;
 import br.com.processo.utils.constants.MensagensConstant;
 import br.com.processo.utils.views.ProcessoView;
@@ -13,8 +15,8 @@ public class ProcessoService {
 	private Integer quantidadeProcessos = 0;
 
 	public ProcessoService(List<Processo> processos) {
-		this.processos = List.of(new Processo(1, 20D), new Processo(2, 9D), new Processo(3, 10D));
-		this.quantidadeProcessos = 3;
+		this.processos = processos;//List.of(new Processo(1, 20D), new Processo(2, 9D), new Processo(3, 10D));
+		this.quantidadeProcessos = processos.size();
 	}
 
 	public static void pegarQuantum() {
@@ -80,6 +82,7 @@ public class ProcessoService {
 		for (int i = 0; i < quantidadeProcessos; i++) {
 			listaIntervalo.add(processos.get(i).getTempoInicial());
 		}
+		printIntervalos(listaIntervalo);
 		return somaIntervalo(listaIntervalo) / this.quantidadeProcessos;
 	}
 
@@ -108,6 +111,7 @@ public class ProcessoService {
 			media += processo.getTempo();
 			listaIntervalo.add(media);
 		}
+		printIntervalos(listaIntervalo);
 		return somaIntervalo(listaIntervalo) / this.processos.size();
 	}
 
@@ -194,5 +198,15 @@ public class ProcessoService {
 			total += processo.getTempo();
 		}
 		return total;
+	}
+	
+	private <T extends List<Double>> void printIntervalos(T listaPrint) {
+		System.err.println(listaPrint.toString());
+		if (listaPrint.get(0) != 0D) {
+			JOptionPane.showMessageDialog(null, listaPrint.toString().replace("[", "[0, "), "Intervalos", 1);
+		} else {
+			JOptionPane.showMessageDialog(null, listaPrint.toString(), "Intervalos", 1);
+
+		}
 	}
 }
