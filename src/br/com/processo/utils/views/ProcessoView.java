@@ -9,6 +9,7 @@ import static br.com.processo.utils.constants.MensagensConstant.PRIORIDADE;
 import static br.com.processo.utils.constants.MensagensConstant.RESULTADO;
 import static br.com.processo.utils.constants.MensagensConstant.TEMPO;
 import static br.com.processo.utils.constants.MensagensConstant.TMP_TEM;
+import static br.com.processo.utils.constants.MensagensConstant.TIPOPROCESSO;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -56,8 +57,13 @@ public class ProcessoView {
 								PRIORIDADE//
 						)//
 				);
+				Integer tipoProcesso = Integer.parseInt(//
+						JOptionPane.showInputDialog(//
+								TIPOPROCESSO//
+								)//
+						);
 				valido = true;
-				return new Processo(id, tempo, nome, prioridade);
+				return new Processo(id, tempo, nome, prioridade, tipoProcesso);
 			} catch (NumberFormatException numberFormatException) {
 				opcaoInvalida();
 				valido = false;
